@@ -1,0 +1,101 @@
+show dbs			: 	列出所有数据库
+db/db.getName()		:	列出当前数据库名
+use + dbname 		:	切换到dbname/创建dbname
+db.dropDatabase()		:	删除数据库
+db.collection.drop()		:	删除集合
+db.createCollection(name, options):	创建集合，options为可选参数	
+db.collectionName.insert()	:	往指定集合插入数据
+db.collectionName.remove(query,justOne)	:	删除集合里的数据 , db.person.remove({"age":13})	
+---------------------------------------------------------------------------------------------------------------------------- 
+db.collectionName.findOne(query, projection)	:
+db.collectionName.find(query, projection)	:	查找集合里的数据，db.person.find({"age" : {$gt:13}}) ，db.person.find({"age" : {$lt:20}},{_id:0})
+查找条件					:	$lt 小于 ，$lte 小于或等于 ，$gt 大于 ，$gte 大于或等于，$ne 不等于
+or 查询 					:	db.person.find( {$or:[ {"age":{$gt:20}} , {"name":"heqin"} ] })
+db.collectionName.find({query1,query2...queryn}).count() ：	统计符合条件的值
+db.collectionName.find({<key>:/^value/})	:	查询以什么值开头 , db.person.find({"name":/^he/})
+db.collectionName.find({<key>:/value/})		:	查询某个字段总是否包含另一个值 , db.person.find({"name":/qin/})
+db.collectionName.find({query}).limit(num)	:	只显示num条
+db.collectionName.find({query}).skip(num)	:	跳过num条后继续显示
+db.collectionName.find({query}).skip(pageIndex*pageSize).limit(pageSize) : 分页显示
+	                	query：查询条件
+		pageIndex：页码索引，从0开始
+		pageSize：每页显示的条数
+db.collectionName.find({query}).sort({<key>:1升序|-1 降序}):	针对某个字段进行升序或者降序排序 , db.person.find({},{_id:0}).sort({"age":1})
+db.collectionName.find({<key>:{$type:<value>}})	:	可以针对某个字段查询该字段的值和具体数据类型相匹配的文档
+	      Double                             1     
+                       String                               2     
+                       Object                              3     
+                       Array                                4     
+                       Binary data                       5     
+                       Undefined                        6       已废弃
+                       Object id                          7     
+                       Boolean                            8     
+                       Date                                  9     
+                       Null                                  10     
+                       Regular Expression         11     
+                       JavaScript                        13     
+                       Symbol                            14     
+                       JavaScript (with scope)   15     
+                       32-bit integer                  16     
+                       Timestamp                      17     
+                       64-bit integer                  18     
+                       Min key                            255       Query with -1.
+                       Max key                           127
+$in 操作符			:	在一个数组中查询匹配的文档，查询条件的值可以有多个，条件可以满足一个或者多个
+	db.collectionName.find({<key>:{$in:[value1,value2...valuen]}})
+	db.person.find({"age":{$in:[14,13]}})
+$nin 操作符		:	和$in操作符相反，选择不符合数组条件的所有文档
+	db.collectionName.find({<key>:{$nin:[value1,value2...valuen]}})
+$and 操作符		:	该操作符用于连接多个条件，只有当每个条件必须都是为true，整个条件的集合才会返回true
+	db.collectionName.find({$and:[{query1},{query2}...{queryn}]})
+$not 操作符		:	该操作符用于对当前的条件取反，要和其他操作符配合使用
+	db.collectionName.find({<key>:{"$not":{"$in":[value1,value2...valuen]}}})
+$all 操作符		:	是针对数组字段操作的，可以完成类似模糊查询的效果，并且和字段值的顺序无关
+	db.collectionName.find({<key>:{$all:[value1,value2...valuen]}})
+$size 操作符		:	该操作符是根据数组字段元素的个数作为查询条件的，可以理解为查询数组字段中具有number个元素的文档
+	db.collectionName.find({<key>:{$size:number}})
+$slice 操作符		:	该操作符可以从数组字段的头部或者尾部获取指定个数的元素的文档
+	db.collectionName.find({query},{<key>:{$slice:number}})
+$elemMatch 操作符		:	该操作符也是针对数组字段来进行的，我们可以针对数组中的元素做判断，是否满足某一个条件，满足就显示记录，不满足就不做操作。
+	db.collectionName.find({<key>:{$elemMatch:{query}}})
+
+--------------------------------------------------------------------------------------------------------------------------------------
+db.collectionName.update()	:	更新指定集合的数据
+         	db.collectionName.update(
+             	<query>,			update的查询条件
+             	<update>,		update的对象和一些更新的操作符
+             	{
+                	upsert: <boolean>,		可选，这个参数的意思是，如果不存在update的记录，是否当新数据插入
+                	multi: <boolean>,		可选，mongodb 默认是false，只更新找到的第一条记录，如果这个参数为true,就把按条件查出来多条记录全部更新
+                	writeConcern: <document>	
+              	}
+          	)
+案例: 
+	db.person.update(
+		{"age":13},			<query>
+		{"$set":{"name":"children"}},		<update>
+		{multi:true}			multi: <boolean>
+	     )
+$set 修改器		:	针对指定字段设置指定的值，修改字段的值
+	db.collectionName.update({query},{"$set":{<key>:<value>}})
+$inc 修改器		:	在数值字段在原有的基础上再增加指定的数值，其值可以是正数，也可以是负数，负数是减多少
+	db.collectionName.update({query},{"$inc":{<key>:number}})
+	db.person.update({"name":"helin"},{"$des":{"age":2}})
+$push 修改器		:	针对指定的字段插入文档列表，如果该字段不存在，会建立该字段并插入内文档容，如果存在，就向该字段的列表里追加文档内容 , 例如：留言板
+	db.collectionName.update({query},{"$push":{<key>:document}})
+	db.person.update({"name":"helin"},{"$push":{"comment":"graduated"}})
+$each 修改器		:	$each , $push 必须组合使用，可以一次增加由多个文档组成的列表，字段有，就追加文档，没有就创建该字段并增加一个由多个文档组成的列表数据
+	db.collectionName.update({query},{"$push":{<key>:{"$each":documents}}})
+	db.person.update({},{"$push":{"hobby":{"$each":query}}},{"multi":"true"}) , query = [{"hobby":"moive"},{"hobby":"music"}]
+$slice 修改器		:	控制记录保存的条数，如果以前有多条会把以前的清空保存条件所规定的记录，如果操作的字段不存在，就会创建该字段
+	db.collectionName.update({query},{$push:{<key>:{$each:documents,$slice:number}}})
+$addToSet 修改器		:	当插入一个数组时，如果数组中有重复记录，只会直插入一条，不会重复插入，会过滤掉重复的记录
+	db.collectionName.update({query},{"$addToSet":{<key>:{"$each":documents}}})
+$pop修改器【删除】		:	从数组中进行向前删除或者向后删除，+1正数表示从尾部开始删除，-1负数表示从头开始删除
+	db.collectionName.update({query},{"$pop":{<key>:1(从后开始删除)/-1(从头开始删除)}}) 
+$pull修改器【删除】		:	根据指定条件删除数组字段里面的指定文档数据，pop只能删除头部或者尾部的数据 
+	db.collectionName.update({query},{"$pull":{<key>:{query2}}})
+
+
+
+
