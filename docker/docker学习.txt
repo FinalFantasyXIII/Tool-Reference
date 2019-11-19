@@ -1,0 +1,23 @@
+docker : 是模拟软件运行环境Container，将软件资源image放入其中运行的管理平台。docker具备自己的远程仓库Repository，用于存储各个公司发布的Image
+
+docker命令：
+docker search	: 	搜索image
+docker pull	:	从远程仓库拉取镜像 ，docker pull 镜像名:latest 这种形式代表拉去最新版本
+docker images	: 	查看本地的image
+docker run      	:	运行镜像
+	docker run -it chug/ubuntu14.04x64 /bin/bash ：以交互模式运行ubuntu ，指定bash为默认shell
+
+修改容器后保存的步骤：
+	1.先用 dockers ps 或 docker ps -l把要保存的docker ID找出来
+	2.docker commit -m " " + ID 即可保存
+
+删除容器：容器是镜像运行时的环境状态等的统称
+	1.docker rm container_id 	删除容器
+	2.docker rmi image_id	删除镜像
+删除某个镜像image 首先得关闭依赖其运行得container。查看所有container ： docker ps -a -q
+删除所有容器 ： docker rm $(docker ps -a -q)
+删除全部镜像 ： docker rmi $(docker images -q)
+
+镜像改名 ： docker tag IMAGEID(镜像id) REPOSITORY:TAG（仓库：标签）
+
+

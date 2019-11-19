@@ -27,7 +27,7 @@ func GetGID() uint64 {
 //-------------------------------------------------------------------------------
 
 func main(){
-	testMQ_6()
+	setQueueLength()
 }
 
 //--------------------------模式1--------------------------------
@@ -484,4 +484,30 @@ func consumeMQ_6_2(){
 	<-forever
 }
 
-
+//-----------------------设置队列中消息的条数-----------------------
+func setQueueLength(){
+	//连接MQ
+	con,err := amqp.Dial("amqp://helin:123@localhost:5672/learnTest")
+	failOnError(err,"connect err")
+	//创建channel
+	ch,err := con.Channel()
+	failOnError(err,"cereate channel err")
+	//创建队列Queue
+	config := map[string]interface{}{"x-max-length":30}
+	q,err := ch.QueueDeclare("onSale",true,false,false,false,config)
+	failOnError(err,"create queue err")
+	//发送消息
+	for i := 0 ;i<100;i++{
+		num := strconv.Itoa(rand.Int())
+		e := ch.Publish(
+			"",
+			q.Name,
+			false,
+			false,
+			amqp.Publishing{
+				ContentType:"text/plain",
+				Body: []byte(num),
+			})
+		failOnError(e,"publish failed")
+	}
+}

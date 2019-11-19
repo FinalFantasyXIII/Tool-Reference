@@ -1,17 +1,29 @@
 package main
 
 import (
+	list2 "container/list"
 	"crypto/md5"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"github.com/garyburd/redigo/redis"
+	"github.com/go-gomail/gomail"
+	"log"
 	"math/rand"
+	"net/http"
 	"os"
 	"runtime"
 	"strconv"
 	"sync"
 	"time"
 )
+func failOnError(err error, msg string) {
+	if err != nil {
+		log.Fatalf("%s: %s", msg, err)
+	}
+}
+//gobook, ok := r.(map[string]interface{}) 判断类型匹配
+//################################################################################
 type Info struct {
 	Name 	string 	`json:"name"`
 	Age 	int		`json:"age"`
@@ -97,11 +109,14 @@ func redisPipe(){
 		fmt.Println(redis.String(conn.Receive()))
 	}
 }
+//################################################################################
+
+//################################################################################
 func main(){
 
 }
-
-//--------------------------------------------------
+//################################################################################
+//-----------------------测试定时器,time.Since(time.now())可记录用时---------------------------
 func TickerAndTimer(){
 	ticker := time.NewTicker(time.Second)
 	timer := time.NewTimer(time.Second*15)
@@ -119,7 +134,7 @@ STOP:
 	fmt.Println("stop ...")
 	fmt.Println(count)
 }
-//--------------------------------------------------
+//-----------------------多路复用select--------------------------
 func testSelect(){
 	cInt := make(chan int)
 	cStr := make(chan string)
@@ -163,7 +178,7 @@ func testSelect(){
 		}
 	}
 }
-//--------------------------------------------------
+//-----------------------chan通道和waitgroup---------------------------
 func testChan(){
 	cInt := make(chan int)
 	var w sync.WaitGroup
@@ -181,7 +196,7 @@ func testChan(){
 	}(cInt)
 	w.Wait()
 }
-//--------------------------------------------------
+//-----------------------go锁 sync.mutex---------------------------
 var num int = 0
 var wg sync.WaitGroup
 func doTest(){
@@ -202,3 +217,98 @@ func dofun(num uint,mutex* sync.Mutex){
 	fmt.Println(num)
 	mutex.Unlock()
 }
+//################################################################################
+//-----------------------go 字符类型和容器---------------------------
+func goChar(){
+	//go 字符类型有两种 byte 和 rune，byte = uint8 代表ascii；rune 代表一个utf-8字符 等价于 int32
+	var c byte = 's'
+	fmt.Printf("%c\n",c)
+	var word rune = '锅'
+	fmt.Printf("%c\n",word)
+	//枚举用法
+	const (
+		Sunday  = iota
+		Monday
+		Tuesday
+		Wednesday
+		Thursday
+		Friday
+		Saturday
+	)
+	fmt.Println(Tuesday)
+	//数组和切片的定义区别 ,切片中元素的删除需要用到切片和append
+	var arry [10]int //数组
+	var sarry []int  //切片
+	for i :=0;i<10;i++{
+		arry[i] = i
+		sarry = append(sarry,i)
+	}
+	sarry = append(sarry[:0],sarry[1:]...) //或 sarry = sarry[1:]
+	fmt.Println(arry)
+	fmt.Println(sarry)
+	//--------------go list--------------------------
+	list := list2.New()
+	list.PushBack(1)
+	list.PushBack(10)
+	list.PushBack(2)
+	list.PushBack(5)
+	fmt.Println(list.Front().Value,list.Back().Value)
+	for i := list.Front();i != nil;i = i.Next(){
+		fmt.Println(i.Value)
+	}
+	/*
+		make 关键字的主要作用是创建切片、哈希表和 Channel 等内置的数据结构，
+		而new 的主要作用是为类型申请一片内存空间，并返回指向这片内存的指针
+	*/
+}
+//-----------------------go的一些特殊包------------------------------
+func goPackage(){
+	//-----------------sync包与锁:限制线程对变量的访问------------------
+	//-----------------big包:对整数的高精度计算------------------------
+	//-----------------image包:图像包制作GIF动画----------------------
+	//-----------------regexp包:正则表达式---------------------------
+	//-----------------os包：系统相关，包括信号文件创建等---------------
+	//-----------------time包:时间相关,时间戳，定时器，计时器等----------
+	//-----------------flag包：命令行参数解析--------------------------
+	//-----------------go 发送电子邮件-------------------------------
+	fromEmail := "1053206020@qq.com"
+	toEmail := "1461671786@qq.com"
+	m := gomail.NewMessage()
+	m.SetAddressHeader("From", fromEmail, "贺林")
+	m.SetAddressHeader("To", toEmail, "helin")
+	m.SetHeader("Subject", "邮件测试")
+	m.SetBody("text/html", "<h1>hello world</h1>")
+
+	d := gomail.NewDialer("smtp.qq.com", 587, "1053206020@qq.com", "srusxeiybntsbcac")
+	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+	if err := d.DialAndSend(m); err != nil {
+		fmt.Printf("***%s\n", err.Error())
+	}
+}
+//################################################################################
+//----------------------go http------------------------------------
+func goHttpGet(){
+	type Ip struct {
+		Code	int		`json:"code"`
+		Data	struct {
+			Ip 		string	`json:"ip"`
+			Country	string	`json:"country"`
+			Area	string 	`json:"area"`
+			Region 	string	`json:"region"`
+			City 	string	`json:"city"`
+			Isp		string 	`json:"isp"`
+		}	`json:"data"`
+	}
+	result := new(Ip)
+	ipAddr := "http://ip.taobao.com/service/getIpInfo.php?ip=" + "14.155.159.164"
+	r,err := http.Get(ipAddr)
+	failOnError(err,"request err")
+	defer r.Body.Close()
+	err = json.NewDecoder(r.Body).Decode(result)
+	failOnError(err,"decoder err")
+	fmt.Println(*result)
+}
+func goHttpPost(){
+
+}
+//################################################################################
