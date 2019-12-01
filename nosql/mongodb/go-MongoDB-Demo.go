@@ -12,80 +12,83 @@ import (
 	"sync"
 	"time"
 )
+
 //-----------------mgo---------------------
 type Person struct {
 	Name string `json:"name"`
-	Age  int 	`json:"age"`
+	Age  int    `json:"age"`
 	Job  string `json:"job"`
 }
-func DbInsert(){
-	session,err := mgo.Dial("")
-	if err != nil{
+
+func DbInsert() {
+	session, err := mgo.Dial("")
+	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	defer session.Close()
-	session.SetMode(mgo.Monotonic,true)
+	session.SetMode(mgo.Monotonic, true)
 	c := session.DB("helin").C("person")
-	err = c.Insert(&Person{"helin",26,"programer"},
-		&Person{"heqin",14,"student"},
-		&Person{"hehan",13,"student"})
-	if err !=nil{
+	err = c.Insert(&Person{"helin", 26, "programer"},
+		&Person{"heqin", 14, "student"},
+		&Person{"hehan", 13, "student"})
+	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	fmt.Println("insert over")
-	time.Sleep(time.Second*5)
+	time.Sleep(time.Second * 5)
 	var res []Person
 	err = c.Find(bson.M{}).All(&res)
-	if err !=nil{
+	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	fmt.Println(res)
 }
-func DbFind(){
-	session,err := mgo.Dial("")
-	if err != nil{
+func DbFind() {
+	session, err := mgo.Dial("")
+	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	defer session.Close()
-	session.SetMode(mgo.Monotonic,true)
+	session.SetMode(mgo.Monotonic, true)
 	c := session.DB("helin").C("person")
 	var res []Person
-	err = c.Find(bson.M{"age":bson.M{"$gt":13}}).All(&res)  //db.person.find({"age" : {$gt:13}})
-	if err != nil{
+	err = c.Find(bson.M{"age": bson.M{"$gt": 13}}).All(&res) //db.person.find({"age" : {$gt:13}})
+	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	fmt.Println(res)
 }
-func DbUpdate(){
-	session,err := mgo.Dial("")
-	if err != nil{
+func DbUpdate() {
+	session, err := mgo.Dial("")
+	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	defer session.Close()
-	session.SetMode(mgo.Monotonic,true)
+	session.SetMode(mgo.Monotonic, true)
 	c := session.DB("helin").C("person")
-	err = c.Update(bson.M{"name":"hehan"},bson.M{"$set":bson.M{"age":12}})
+	err = c.Update(bson.M{"name": "hehan"}, bson.M{"$set": bson.M{"age": 12}})
 	if err != nil {
 		fmt.Println(err)
 	}
 }
 
 //-----------------official driver-----------
-type Trainer struct{
+type Trainer struct {
 	Name string `json:"name"`
-	Age  int 	`json:"age"`
+	Age  int    `json:"age"`
 	City string `json:"city"`
 }
-func MgInsert(){
+
+func MgInsert() {
 	clientOption := options.Client().ApplyURI("mongodb://localhost:27017")
-	con,err := mongo.Connect(context.TODO(),clientOption)
-	if err != nil{
+	con, err := mongo.Connect(context.TODO(), clientOption)
+	if err != nil {
 		fmt.Println(err)
 		return
 	}
@@ -93,18 +96,18 @@ func MgInsert(){
 	ash := Trainer{"Ash", 10, "Pallet Town"}
 	misty := Trainer{"Misty", 10, "Cerulean City"}
 	brock := Trainer{"Brock", 15, "Pewter City"}
-	data := []interface{}{ash,misty,brock}
-	res,err := c.InsertMany(context.TODO(),data)
-	if err != nil{
+	data := []interface{}{ash, misty, brock}
+	res, err := c.InsertMany(context.TODO(), data)
+	if err != nil {
 		fmt.Println(res.InsertedIDs)
 		return
 	}
 
 }
-func MgFind(){
+func MgFind() {
 	clientOption := options.Client().ApplyURI("mongodb://localhost:27017")
-	con,err := mongo.Connect(context.TODO(),clientOption)
-	if err != nil{
+	con, err := mongo.Connect(context.TODO(), clientOption)
+	if err != nil {
 		fmt.Println(err)
 		return
 	}
@@ -113,90 +116,90 @@ func MgFind(){
 	findOptions := options.Find()
 	findOptions.SetLimit(3)
 	var result []Trainer
-	r,err := c.Find(context.TODO(),bson.M{"age":bson.M{"$gt":10}},findOptions)
-	if err != nil{
+	r, err := c.Find(context.TODO(), bson.M{"age": bson.M{"$gt": 10}}, findOptions)
+	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	for r.Next(context.TODO()){
+	for r.Next(context.TODO()) {
 		var tmp Trainer
 		err := r.Decode(&tmp)
-		if err != nil{
+		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		result = append(result,tmp)
+		result = append(result, tmp)
 	}
 	fmt.Println(result)
 }
-func MgUpdate(){
+func MgUpdate() {
 	clientOption := options.Client().ApplyURI("mongodb://localhost:27017")
-	con,err := mongo.Connect(context.TODO(),clientOption)
-	if err != nil{
+	con, err := mongo.Connect(context.TODO(), clientOption)
+	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	c := con.Database("helin").Collection("test")
-	result,err := c.UpdateOne(context.TODO(),bson.M{"name":"Ash"},bson.M{"$inc":bson.M{"age":1}})
-	if err != nil{
+	result, err := c.UpdateOne(context.TODO(), bson.M{"name": "Ash"}, bson.M{"$inc": bson.M{"age": 1}})
+	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	fmt.Println(result)
 }
 
-
 //-----------------数据采集-----------------------
 type HData struct {
-	Title	string 	`json:"title"`
-	Pic		string 	`json:"pic"`
-	Year	int		`json:"year"`
-	Month	int		`json:"month"`
-	Day		int		`json:"day"`
-	Des		string 	`json:"des"`
-	Lunar	string 	`json:"lunar"`
+	Title string `json:"title"`
+	Pic   string `json:"pic"`
+	Year  int    `json:"year"`
+	Month int    `json:"month"`
+	Day   int    `json:"day"`
+	Des   string `json:"des"`
+	Lunar string `json:"lunar"`
 }
-func UrlLink(month int,url string) []string {
+
+func UrlLink(month int, url string) []string {
 	var days int
 	var urls []string
 	if month == 2 {
 		days = 29
-	}else if month == 4&&month == 6&&month == 9&&month == 11{
+	} else if month == 4 && month == 6 && month == 9 && month == 11 {
 		days = 30
-	}else{
+	} else {
 		days = 31
 	}
-	for i := 1; i<=days;i++{
-		urls = append(urls,fmt.Sprintf(url,month,i))
+	for i := 1; i <= days; i++ {
+		urls = append(urls, fmt.Sprintf(url, month, i))
 	}
 	return urls
 }
-func DownloadData(urls []string) []HData{
+func DownloadData(urls []string) []HData {
 	var ret []HData
-	for _,s := range urls{
+	for _, s := range urls {
 		result := new(HData)
-		r,_ := http.Get(s)
+		r, _ := http.Get(s)
 		defer r.Body.Close()
 		json.NewDecoder(r.Body).Decode(result)
 		fmt.Println(result)
-		ret = append(ret,*result)
+		ret = append(ret, *result)
 	}
 	return ret
 }
-func StoreData(data []HData,collectionName string,conn *mgo.Session) error {
+func StoreData(data []HData, collectionName string, conn *mgo.Session) error {
 	c := conn.DB("HistoryOfToday").C(collectionName)
-	for _,d := range data{
+	for _, d := range data {
 		err := c.Insert(d)
-		if err!= nil{
+		if err != nil {
 			return err
 		}
 	}
 	return nil
 }
-func WorkFunc(month int,url string,conn *mgo.Session,wg *sync.WaitGroup){
+func WorkFunc(month int, url string, conn *mgo.Session, wg *sync.WaitGroup) {
 	defer wg.Done()
 	defer conn.Close()
-	urls := UrlLink(month,url) //拼接url
+	urls := UrlLink(month, url)   //拼接url
 	ressult := DownloadData(urls) //请求拿数据
 	var collectionName string
 	switch month {
@@ -239,26 +242,26 @@ func WorkFunc(month int,url string,conn *mgo.Session,wg *sync.WaitGroup){
 	default:
 		panic("err month")
 	}
-	err := StoreData(ressult,collectionName,conn) //将数据存储到本地
-	if err != nil{
+	err := StoreData(ressult, collectionName, conn) //将数据存储到本地
+	if err != nil {
 		fmt.Println(err)
 	}
 }
 
-func main(){
+func main() {
 	var wg sync.WaitGroup
 	var conAarry []*mgo.Session
-	for i := 0;i<12;i++{
-		con,err := mgo.Dial("")
-		if err != nil{
+	for i := 0; i < 12; i++ {
+		con, err := mgo.Dial("")
+		if err != nil {
 			return
 		}
-		conAarry = append(conAarry,con)
+		conAarry = append(conAarry, con)
 	}
 	url := "http://api.juheapi.com/japi/toh?v=1.0&month=%d&day=%d&key=c25c742a5f7f7b6444ba30b8a2734dff"
-	for i:=1;i<=12;i++{
+	for i := 1; i <= 12; i++ {
 		wg.Add(1)
-		go WorkFunc(i,url,conAarry[i-1],&wg)
+		go WorkFunc(i, url, conAarry[i-1], &wg)
 	}
 	wg.Wait()
 }
