@@ -158,6 +158,12 @@ type HData struct {
 	Des   string `json:"des"`
 	Lunar string `json:"lunar"`
 }
+type FinalData struct {
+	Resultcode	string	`json:"resultcode"`
+	Reason		string	`json:"reason"`
+	Result 		[]HData	`json:"result"`
+	ErrorCode	int		`json:"error_code"`
+}
 
 func UrlLink(month int, url string) []string {
 	var days int
@@ -177,12 +183,17 @@ func UrlLink(month int, url string) []string {
 func DownloadData(urls []string) []HData {
 	var ret []HData
 	for _, s := range urls {
-		result := new(HData)
+		result := new(FinalData)
 		r, _ := http.Get(s)
-		defer r.Body.Close()
 		json.NewDecoder(r.Body).Decode(result)
-		fmt.Println(result)
-		ret = append(ret, *result)
+		if len(result.Result) == 0{
+			continue
+		}
+		for _,d := range result.Result {
+			fmt.Println(d)
+			ret = append(ret,d)
+		}
+		r.Body.Close()
 	}
 	return ret
 }
@@ -259,7 +270,7 @@ func main() {
 		conAarry = append(conAarry, con)
 	}
 	url := "http://api.juheapi.com/japi/toh?v=1.0&month=%d&day=%d&key=c25c742a5f7f7b6444ba30b8a2734dff"
-	for i := 1; i <= 12; i++ {
+	for i := 4; i <= 4; i++ {
 		wg.Add(1)
 		go WorkFunc(i, url, conAarry[i-1], &wg)
 	}
