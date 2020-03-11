@@ -21,3 +21,12 @@ docker run      	:	运行镜像
 镜像改名 ： docker tag IMAGEID(镜像id) REPOSITORY:TAG（仓库：标签）
 
 
+查看容器 : docker ps , docker ps -a -q
+
+打开关闭重启某个容器 
+	docker start + container_id
+	docker stop + container_id 
+	docker restart + container_id 
+
+进入某个容器 ： docker attach + container_id  		
+
