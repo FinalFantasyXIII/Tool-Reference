@@ -30,3 +30,7 @@ docker run      	:	运行镜像
 
 进入某个容器 ： docker attach + container_id  		
 
+docker run -p 6699:6379 --name myredis -v /root/myredis/redis.conf/redis.conf:/etc/redis/redis.conf -v /root/data:/data -d redis redis-server /etc/redis/redis.conf --appendonly yes
+docker exec -it  '容器名字'  redis-cli
+
+docker logs  + 容器id    ： 查看容器的日志
