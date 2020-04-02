@@ -1,0 +1,88 @@
+1.修改配置文件，配置文件在/etc/mysql/ 目录中
+
+2 新建实例的数据文件目录
+	mkdir -p   /helin/mysql_3307
+ 	chown -R  mysql:mysql   /helin/mysql_3307
+	vim  /etc/apparmor.d/usr.sbin.mysqld  
+        		 在 # Allow data files dir access中添加：
+         		/datayes/mysql_3307/ r,     --数据文件路径
+         		/datayes/mysql_3307/** rwk,  
+	重启apparmor服务  service apparmor restart
+
+3 如果要新增日志文件目录，那就要新增一个目录
+	mkdir  /var/log/mysql_3307
+	chown -R mysql:mysql  /var/log/mysql_3307
+	cp  /var/log/mysql/mysql-bin.index  /var/log/mysql_3307/
+
+4 初始化目录
+	/usr/sbin/mysqld  --defaults-file=/etc/mysql/my_3307.cnf  --user=mysql  --datadir=/helin/mysql_3307 --initialize
+
+5 启动mysql
+	/usr/bin/mysqld_safe --defaults-file=/etc/mysql/my_3307.cnf  --datadir=/helin/mysql_3307
+
+6 杀死之前的mysql进程，启用跳过验证登录
+	/usr/bin/mysqld_safe --defaults-file=/etc/mysql/my_3307.cnf  --datadir=/helin/mysql_3307 --skip-grant-tables
+
+7 用免密码登录
+	mysql -uroot -p -S /helin/mysql_3307/mysqld_3307.sock
+
+8 设置新的用户密码
+	update mysql.user set authentication_string=password('123') where user='root' and Host ='localhost';
+	flush privileges;
+
+9 重启服务，用设置的密码登录
+	mysql -uroot -p -S /helin/mysql_3307/mysqld_3307.sock
+
+10 
+	SET PASSWORD = PASSWORD('123');
+
+11 解决不能远程访问的问题
+	查看访问权限	use mysql ;
+			select  User,authentication_string,Host from user;
+	新增权限		GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '123';
+			flush privileges;     
+	
+==========================================================================
+主从复制配置
+
+1 创建账号授权
+	GRANT REPLICATION SLAVE ON *.* TO 'slave_3308'@'%' identified by '123';
+	FLUSH PRIVILEGES;
+
+2 查看mster 状态
+	show master status;
+	+--------------------+----------+----------------+--------------------+---------------------+
+	| File                          | Position  | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set  
+	+--------------------+----------+----------------+--------------------+---------------------+
+	| mysql-bin.000006	|     1448   |              	          |                               |                                 
+	+--------------------+----------+----------------+--------------------+---------------------+
+
+3 在从库上执行 
+	CHANGE MASTER TO
+        		MASTER_HOST='192.168.31.220',   
+        		MASTER_USER='slave_3308',
+        		MASTER_PASSWORD='123',
+        		MASTER_PORT=3308,
+       		 MASTER_LOG_FILE='mysql-bin.000006',
+       		 MASTER_LOG_POS=1448;
+
+	查看从库状态  show slave status\G
+	如果 Slave_IO_Running: No 和  Slave_SQL_Running: No 都为yes则配置成功
+
+
+如果  Slave_SQL_Running: No 
+	stop slave;
+	SET GLOBAL SQL_SLAVE_SKIP_COUNTER=1;
+	start slave;
+
+如果是  Slave_IO_Running: No
+	先检查master  ， show master status ;	
+	然后根据master信息执行 下面操作
+	CHANGE MASTER TO
+        		MASTER_HOST='192.168.31.220',   
+        		MASTER_USER='slave_3308',
+        		MASTER_PASSWORD='123',
+        		MASTER_PORT=3308,
+       		 MASTER_LOG_FILE='mysql-bin.000006',
+       		 MASTER_LOG_POS=1448;
+	
