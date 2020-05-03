@@ -1,4 +1,4 @@
-package WebSpider
+package webspider
 
 import (
 	"bytes"

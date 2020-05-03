@@ -1,11 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+    <generated />
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="96a18c35-a1fb-4b4e-a187-1b273976e3b1" name="Default Changelist" comment="" />
+    <list default="true" id="96a18c35-a1fb-4b4e-a187-1b273976e3b1" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/Web Spider/MTL.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Go/BY.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Go/downloadPictures.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Go/fileSelector.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Go/go-Demo.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Go/main.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Go/socket/client.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Go/socket/server.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Go/test.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Go/total/full.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Web Spider/bing.go" beforeDir="false" afterPath="$PROJECT_DIR$/Web Spider/bing.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Web Spider/meitulu.go" beforeDir="false" afterPath="$PROJECT_DIR$/Web Spider/meitulu.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Web Spider/mgsdaigou9.go" beforeDir="false" afterPath="$PROJECT_DIR$/Web Spider/mgsdaigou9.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -15,7 +42,13 @@
     </option>
   </component>
   <component name="GOROOT" path="C:/Program Files (x86)/Work Station/Go" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
   <component name="ProjectId" id="1bKyhXhyCy5SebwSYfE2lhEaJrt" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showExcludedFiles" value="true" />
@@ -25,10 +58,39 @@
     <property name="DefaultGoTemplateProperty" value="Go File" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="configurable.Global.GOPATH.is.expanded" value="true" />
+    <property name="configurable.Module.GOPATH.is.expanded" value="false" />
+    <property name="configurable.Project.GOPATH.is.expanded" value="true" />
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
-    <property name="last_opened_file_path" value="$USER_HOME$" />
-    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="com.goide.configuration.GoLibrariesConfigurableProvider" />
+  </component>
+  <component name="RunManager">
+    <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="helin" />
+      <working_directory value="$PROJECT_DIR$/" />
+      <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/main.go" />
+      <directory value="$PROJECT_DIR$/" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="96a18c35-a1fb-4b4e-a187-1b273976e3b1" name="Default Changelist" comment="" />
+      <created>1588396939900</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1588396939900</updated>
+      <workItem from="1588396941959" duration="29000" />
+      <workItem from="1588470730792" duration="44000" />
+      <workItem from="1588515552440" duration="12000" />
+    </task>
+    <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
@@ -38,9 +100,29 @@
       <screen x="0" y="0" width="2194" height="1194" />
     </state>
     <state x="590" y="176" key="#Go_Modules_(vgo)/0.0.2194.1194@0.0.2194.1194" timestamp="1588395397623" />
-    <state x="458" y="312" key="SettingsEditor" timestamp="1588396062744">
+    <state x="828" y="298" key="FileChooserDialogImpl" timestamp="1588513852268">
       <screen x="0" y="0" width="2194" height="1194" />
     </state>
-    <state x="458" y="312" key="SettingsEditor/0.0.2194.1194@0.0.2194.1194" timestamp="1588396062744" />
+    <state x="828" y="298" key="FileChooserDialogImpl/0.0.2194.1194@0.0.2194.1194" timestamp="1588513852268" />
+    <state width="2141" height="318" key="GridCell.Tab.0.bottom" timestamp="1588512072325">
+      <screen x="0" y="0" width="2194" height="1194" />
+    </state>
+    <state width="2141" height="318" key="GridCell.Tab.0.bottom/0.0.2194.1194@0.0.2194.1194" timestamp="1588512072325" />
+    <state width="2141" height="318" key="GridCell.Tab.0.center" timestamp="1588512072325">
+      <screen x="0" y="0" width="2194" height="1194" />
+    </state>
+    <state width="2141" height="318" key="GridCell.Tab.0.center/0.0.2194.1194@0.0.2194.1194" timestamp="1588512072325" />
+    <state width="2141" height="318" key="GridCell.Tab.0.left" timestamp="1588512072325">
+      <screen x="0" y="0" width="2194" height="1194" />
+    </state>
+    <state width="2141" height="318" key="GridCell.Tab.0.left/0.0.2194.1194@0.0.2194.1194" timestamp="1588512072325" />
+    <state width="2141" height="318" key="GridCell.Tab.0.right" timestamp="1588512072325">
+      <screen x="0" y="0" width="2194" height="1194" />
+    </state>
+    <state width="2141" height="318" key="GridCell.Tab.0.right/0.0.2194.1194@0.0.2194.1194" timestamp="1588512072325" />
+    <state x="458" y="306" key="SettingsEditor" timestamp="1588512289029">
+      <screen x="0" y="0" width="2194" height="1194" />
+    </state>
+    <state x="458" y="306" key="SettingsEditor/0.0.2194.1194@0.0.2194.1194" timestamp="1588512289029" />
   </component>
 </project>
