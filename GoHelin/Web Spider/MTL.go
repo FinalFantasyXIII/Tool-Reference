@@ -60,6 +60,7 @@ func Start(){
 	}*/
 	for _,value := range results{
 		fmt.Println("----------------------------------------------------------------------------")
+		fmt.Println(value)
 		MTL(localDir,value)
 	}
 	//DownLoad("D:/pics/",10000,10003,&wg)
@@ -97,7 +98,12 @@ func GetPicsCode(targetLink string) ([]Result,int){
 
 
 func MTL(localDir string,rt Result ){
+	ret := strings.Contains(rt.Title,"/")
+	if ret{
+		rt.Title = strings.ReplaceAll(rt.Title,"/",".")
+	}
 	picDir := rt.Title + "/"
+	fmt.Println(picDir)
 	if err := os.Mkdir(localDir+picDir, os.ModePerm); err != nil{
 		return
 	}
@@ -106,11 +112,11 @@ func MTL(localDir string,rt Result ){
 		resp, err := http.Get(link)
 		if err != nil{
 			resp.Body.Close()
-			continue
+			break
 		}
 		if resp.StatusCode != 200 {
 			resp.Body.Close()
-			continue
+			break
 		}
 		body, _ := ioutil.ReadAll(resp.Body)
 
