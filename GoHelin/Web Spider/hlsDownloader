@@ -1,0 +1,100 @@
+package main
+
+import (
+	"bufio"
+	"errors"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"os"
+	"strings"
+)
+
+
+//http://888.duqing1.xyz/video/m3u8/2021/02/01/d37149eb/m3u8.m3u8
+func HttpBody(url string) ([]byte,error){
+	rsp,err := http.Get(url)
+	if err != nil{
+		return nil,err
+	}
+	defer rsp.Body.Close()
+
+	if rsp.StatusCode != 200{
+		return nil,errors.New("访问失败")
+	}
+
+	data , err := ioutil.ReadAll(rsp.Body)
+	return data,err
+}
+
+func AnalysisM3u8(url string)([]string,error){
+	rsp,err := http.Get(url)
+	if err != nil{
+		return nil,err
+	}
+	defer rsp.Body.Close()
+
+	if rsp.StatusCode != 200{
+		return nil,errors.New("访问失败")
+	}
+
+	scanner := bufio.NewScanner(rsp.Body)
+	var result []string
+	for scanner.Scan() {
+		line := scanner.Text()
+		if line[0] == '#'{
+			continue
+		}
+		result = append(result,line)
+	}
+
+	return result,nil
+}
+
+
+func main(){
+	var path string
+again:
+	fmt.Println("请输入你想要下载Url:")
+	fmt.Scanln(&path)
+	//提取url 前缀
+	if !strings.HasSuffix(path,".m3u8"){
+		fmt.Println("文件格式有误,没有m3u8后缀")
+		goto again
+	}
+
+	//path := "http://888.duqing1.xyz/video/m3u8/2021/02/01/d37149eb/m3u8.m3u8"
+
+	arry := strings.Split(path,"/")
+	template := arry[len(arry)-1]
+	tsFiles , err := AnalysisM3u8(path)
+	if err != nil{
+		fmt.Println("AnalysisM3u8",err)
+		return
+	}
+
+
+	//开始抓取
+	for _,v := range tsFiles{
+		s := strings.ReplaceAll(path,template,v)
+		fmt.Println(s)
+
+		data , err := HttpBody(s)
+		if err != nil{
+			fmt.Println(v,"get error，program stop")
+			panic(err)
+		}
+
+		//store data
+		file, err := os.Create(v)
+		if err != nil {
+			fmt.Println("file create failed")
+			continue
+		}
+		file.Write(data)
+		file.Close()
+	}
+
+	fmt.Println("finished !")
+	fmt.Scanln(&path)
+}
